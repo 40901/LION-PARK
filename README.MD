@@ -199,6 +199,14 @@ LionPark/
 
 > O primeiro usuário cadastrado no sistema é promovido automaticamente a **Admin**.
 
+##status
+
+Em desenvolvimento.
+
+| `main` | versão de trabalho |
+| `entrega1409` | versão submetida à avaliação de 14/09/2026 |
+| `entrega2809` | versão submetida à avaliação de 28/09/2026 |
+
 ---
 
 © 2026 Lion Park Technologies. Todos os direitos reservados.
