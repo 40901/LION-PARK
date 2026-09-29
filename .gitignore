@@ -1,0 +1,242 @@
+# ==============================================================================
+# Lion Park — arquivos ignorados pelo controle de versão
+# Stack: .NET 10 (C#) · Angular 21 (TypeScript) · PostgreSQL 16 (Docker)
+# ==============================================================================
+# Princípio: versiona-se código-fonte e configuração declarativa. Tudo que for
+# derivável de um build, específico de uma máquina ou sigiloso fica de fora.
+# ==============================================================================
+
+
+# ------------------------------------------------------------------------------
+# .NET — saída de compilação
+# ------------------------------------------------------------------------------
+# bin/ e obj/ são regeneráveis por `dotnet build`. Versioná-los infla o
+# repositório, polui todo diff e gera conflito de merge em arquivo binário.
+[Bb]in/
+[Oo]bj/
+[Oo]ut/
+[Ll]og/
+[Ll]ogs/
+
+# Artefatos de compilação e depuração
+*.dll
+*.exe
+*.pdb
+*.mdb
+*.so
+*.dylib
+*.suo
+*.user
+*.userosscache
+*.sln.docstates
+*.userprefs
+*.cache
+*.tlog
+*.ilk
+*.meta
+*.obj
+*.iobj
+*.ipdb
+*.pgc
+*.pgd
+*.rsp
+*.sbr
+*.tli
+*.tlh
+*.tmp
+*.tmp_proj
+*.vspscc
+*.vssscc
+*.pidb
+*.svclog
+*.scc
+
+# Arquivos gerados pelo SDK durante a restauração
+project.assets.json
+project.nuget.cache
+*.nuget.dgspec.json
+*.nuget.g.props
+*.nuget.g.targets
+*.AssemblyInfo.cs
+*.AssemblyInfoInputs.cache
+*.GeneratedMSBuildEditorConfig.editorconfig
+*.assets.cache
+*.csproj.AssemblyReference.cache
+*.csproj.CoreCompileInputs.cache
+*.csproj.FileListAbsolute.txt
+*.genruntimeconfig.cache
+MSBuild_Logs/
+
+# Publicação
+[Pp]ublish/
+*.[Pp]ublish.xml
+*.azurePubxml
+*.pubxml
+*.publishproj
+PublishScripts/
+
+# Pacotes NuGet (restauráveis a partir do .csproj)
+*.nupkg
+*.snupkg
+**/[Pp]ackages/*
+!**/[Pp]ackages/build/
+*.nuget.props
+*.nuget.targets
+
+# Visual Studio / Rider / VS Code
+.vs/
+.vscode/*
+!.vscode/settings.json
+!.vscode/tasks.json
+!.vscode/launch.json
+!.vscode/extensions.json
+!.vscode/mcp.json
+.idea/
+*.sln.iml
+_ReSharper*/
+*.[Rr]e[Ss]harper
+*.DotSettings.user
+
+# Cobertura e testes
+[Tt]est[Rr]esult*/
+[Bb]uild[Ll]og.*
+*.coverage
+*.coveragexml
+coverage*.json
+coverage*.xml
+coverage*.info
+TestResults/
+.axoCover/
+*.trx
+
+
+# ------------------------------------------------------------------------------
+# Node / Angular — dependências e saída de build
+# ------------------------------------------------------------------------------
+node_modules/
+dist/
+tmp/
+out-tsc/
+bazel-out/
+.angular/
+*.tsbuildinfo
+
+# Logs de gerenciadores de pacote
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+pnpm-debug.log*
+lerna-debug.log*
+.pnpm-store/
+.npm/
+.yarn/cache
+.yarn/unplugged
+.yarn/install-state.gz
+
+# UnoCSS — src/uno.css é GERADO por `npm run build:unocss`.
+# Não versionar: é derivado das classes usadas no código-fonte.
+frontend/src/uno.css
+
+# Testes e cobertura do frontend
+/coverage
+.nyc_output/
+testem.log
+__screenshots__/
+playwright-report/
+test-results/
+
+
+# ------------------------------------------------------------------------------
+# Segredos e configuração por ambiente
+# ------------------------------------------------------------------------------
+# NUNCA versionar credenciais. Use variáveis de ambiente ou
+# `dotnet user-secrets` em desenvolvimento.
+appsettings.Production.json
+appsettings.Local.json
+appsettings.*.Local.json
+secrets.json
+*.pfx
+*.p12
+*.key
+*.pem
+*.crt
+*.cer
+.env
+.env.*
+!.env.example
+frontend/src/environments/environment.prod.ts
+frontend/src/app/core/config/environment.local.ts
+
+
+# ------------------------------------------------------------------------------
+# Banco de dados
+# ------------------------------------------------------------------------------
+# Dumps e volumes locais não pertencem ao repositório.
+*.sqlite
+*.sqlite3
+*.db
+*.mdf
+*.ldf
+*.bak
+*.dump
+pgdata/
+postgres_data/
+
+
+# ------------------------------------------------------------------------------
+# Docker
+# ------------------------------------------------------------------------------
+# Sobrescritas locais do compose são específicas de cada máquina.
+docker-compose.override.yml
+docker-compose.*.local.yml
+
+
+# ------------------------------------------------------------------------------
+# Python — gerador da documentação técnica (doc/.claude/skills/gerador)
+# ------------------------------------------------------------------------------
+venv/
+.venv/
+__pycache__/
+*.py[cod]
+*.egg-info/
+
+
+# ------------------------------------------------------------------------------
+# Documentação — arquivos temporários de editores de texto
+# ------------------------------------------------------------------------------
+~$*.docx
+~$*.doc
+~$*.xlsx
+*.docx#
+.~lock.*#
+
+
+# ------------------------------------------------------------------------------
+# Sistema operacional
+# ------------------------------------------------------------------------------
+.DS_Store
+.DS_Store?
+._*
+.Spotlight-V100
+.Trashes
+Thumbs.db
+ehthumbs.db
+Desktop.ini
+$RECYCLE.BIN/
+*.lnk
+.directory
+.fuse_hidden*
+.nfs*
+
+
+# ------------------------------------------------------------------------------
+# Editores
+# ------------------------------------------------------------------------------
+*.swp
+*.swo
+*~
+.history/
+*.bak
+*.orig
+*.rej
+.claude/
