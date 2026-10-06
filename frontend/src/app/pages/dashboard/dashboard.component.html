@@ -1,0 +1,26 @@
+<div class="space-y-6 animate-fade-in-up">
+  <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+    <div class="bg-white p-6 rounded-2xl shadow-sm border border-slate-100 flex items-center gap-5">
+      <div class="w-14 h-14 rounded-full bg-blue-50 flex items-center justify-center">
+        <div class="i-mdi-car text-3xl text-blue-600"></div>
+      </div>
+      <div>
+        <p class="text-sm font-bold text-slate-500 uppercase tracking-wide">Vagas Ocupadas (Ao Vivo)</p>
+        <p class="text-3xl font-black text-slate-800">{{ activeCount() }}</p>
+      </div>
+    </div>
+  </div>
+
+  <div class="bg-white rounded-2xl shadow-sm border border-slate-100 overflow-hidden">
+    <div class="px-6 py-5 border-b border-slate-100 flex items-center justify-between">
+      <h3 class="text-lg font-bold text-slate-800">Aviso do Sistema</h3>
+    </div>
+    <div class="p-6">
+      <div class="flex items-center justify-center py-10 text-slate-400 flex-col gap-3">
+        <div class="i-mdi-information-outline text-5xl opacity-50"></div>
+        <p class="font-medium text-lg text-center max-w-lg">Para visualizar o histórico financeiro e o total de entradas
+          diárias, os respectivos relatórios precisam ser implementados na API.</p>
+      </div>
+    </div>
+  </div>
+</div>

@@ -1,0 +1,21 @@
+# Saída de compilação — regenerada dentro do contêiner
+**/bin/
+**/obj/
+**/out/
+
+# Artefatos e configuração local
+**/*.user
+**/appsettings.Development.json
+**/appsettings.Local.json
+**/Properties/launchSettings.json
+
+# Controle de versão e editores
+.git/
+.gitignore
+.vs/
+.vscode/
+.idea/
+
+# Documentação
+**/*.md
+**/*.MD

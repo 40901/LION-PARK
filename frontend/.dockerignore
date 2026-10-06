@@ -1,0 +1,15 @@
+node_modules/
+dist/
+.angular/
+coverage/
+src/uno.css
+
+.git/
+.gitignore
+.vscode/
+.idea/
+
+*.md
+*.MD
+Dockerfile
+.dockerignore

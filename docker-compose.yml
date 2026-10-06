@@ -1,16 +1,98 @@
+# =============================================================================
+# Lion Park — stack completa
+# =============================================================================
+#   docker compose up -d --build     sobe tudo
+#   Aplicação:  http://localhost:4200
+#
+# Único pré-requisito na máquina: Docker. Node e .NET SDK ficam dentro dos
+# estágios de build e não precisam estar instalados.
+#
+# O usuário acessa apenas o frontend. O nginx encaminha /api para o backend
+# pela rede interna; a porta da API não é publicada por padrão.
+# =============================================================================
+
+name: lionpark
+
 services:
+
+  # ---------------------------------------------------------------------------
+  # Banco de dados
+  # ---------------------------------------------------------------------------
   postgres:
     image: postgres:16-alpine
     container_name: lionpark_db
     environment:
-      POSTGRES_USER: postgres
-      POSTGRES_PASSWORD: postgres
-      POSTGRES_DB: lionpark_db
+      POSTGRES_USER: ${POSTGRES_USER:-postgres}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-postgres}
+      POSTGRES_DB: ${POSTGRES_DB:-lionpark_db}
+      # Acelera o initdb; não afeta a durabilidade após a carga inicial
+      POSTGRES_INITDB_ARGS: "--data-checksums"
     ports:
-      - "5432:5432"
+      # Exposta para permitir inspeção com psql/DBeaver a partir do host.
+      # Comente esta seção se não precisar acessar o banco de fora.
+      - "${POSTGRES_PORT:-5432}:5432"
     volumes:
       - postgres_data:/var/lib/postgresql/data
+      # Scripts em docker-entrypoint-initdb.d rodam UMA VEZ, na criação do
+      # volume. É assim que o esquema é aplicado sem passo manual.
+      - ./schema.sql:/docker-entrypoint-initdb.d/01-schema.sql:ro
+    healthcheck:
+      # O backend só inicia depois que este teste passar
+      test: ["CMD-SHELL", "pg_isready -U ${POSTGRES_USER:-postgres} -d ${POSTGRES_DB:-lionpark_db}"]
+      interval: 5s
+      timeout: 5s
+      retries: 12
+      start_period: 10s
     restart: unless-stopped
+    networks: [lionpark_net]
+
+  # ---------------------------------------------------------------------------
+  # API — .NET 10
+  # ---------------------------------------------------------------------------
+  backend:
+    build:
+      context: ./backend
+      dockerfile: Dockerfile
+    image: lionpark/api:latest
+    container_name: lionpark_api
+    environment:
+      ASPNETCORE_ENVIRONMENT: ${ASPNETCORE_ENVIRONMENT:-Production}
+      ASPNETCORE_URLS: http://+:8080
+      # O separador "__" mapeia para a hierarquia do appsettings.json:
+      # ConnectionStrings__DefaultConnection => ConnectionStrings:DefaultConnection
+      ConnectionStrings__DefaultConnection: >-
+        Host=postgres;Port=5432;Database=${POSTGRES_DB:-lionpark_db};Username=${POSTGRES_USER:-postgres};Password=${POSTGRES_PASSWORD:-postgres}
+    depends_on:
+      postgres:
+        condition: service_healthy
+    expose:
+      - "8080"
+    # Descomente para chamar a API direto do host (ex.: Postman, curl):
+    # ports:
+    #   - "5038:8080"
+    restart: unless-stopped
+    networks: [lionpark_net]
+
+  # ---------------------------------------------------------------------------
+  # Frontend — Angular compilado, servido por nginx com proxy da API
+  # ---------------------------------------------------------------------------
+  frontend:
+    build:
+      context: ./frontend
+      dockerfile: Dockerfile
+    image: lionpark/web:latest
+    container_name: lionpark_web
+    ports:
+      - "${WEB_PORT:-4200}:8080"
+    depends_on:
+      backend:
+        condition: service_healthy
+    restart: unless-stopped
+    networks: [lionpark_net]
+
+networks:
+  lionpark_net:
+    driver: bridge
 
 volumes:
   postgres_data:

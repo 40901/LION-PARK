@@ -1,0 +1,117 @@
+<div class="flex h-screen bg-[#F8FAFC] font-sans selection:bg-blue-600/20">
+  <aside class="w-[280px] bg-slate-950 flex flex-col relative z-20 shadow-2xl">
+    <div class="absolute inset-0 bg-gradient-to-b from-blue-600/10 to-transparent pointer-events-none"></div>
+
+    <div class="h-20 flex items-center px-8 border-b border-white/5">
+      <div class="i-mdi-lion text-3xl text-blue-500 mr-3"></div>
+      <h1 class="text-xl font-black text-white tracking-widest uppercase">Lion Park</h1>
+    </div>
+
+    <nav class="flex-1 px-4 py-6 space-y-1.5 overflow-y-auto z-10">
+      <p class="px-4 text-xs font-bold text-slate-500 uppercase tracking-widest mb-4 mt-2">Menu Principal</p>
+
+      <a routerLink="/dashboard" routerLinkActive="bg-blue-600/10 text-blue-400"
+        [routerLinkActiveOptions]="{exact: true}"
+        class="flex items-center px-4 py-3.5 rounded-xl text-slate-400 hover:bg-white/5 hover:text-slate-100 transition-all group">
+        <div
+          class="i-mdi-view-dashboard text-2xl mr-3 group-hover:scale-110 transition-transform text-slate-500 group-hover:text-blue-400">
+        </div>
+        <span class="font-semibold text-sm tracking-wide">Dashboard</span>
+      </a>
+
+      <a routerLink="/entries" routerLinkActive="bg-blue-600/10 text-blue-400"
+        class="flex items-center px-4 py-3.5 rounded-xl text-slate-400 hover:bg-white/5 hover:text-slate-100 transition-all group">
+        <div
+          class="i-mdi-boom-gate text-2xl mr-3 group-hover:scale-110 transition-transform text-slate-500 group-hover:text-blue-400">
+        </div>
+        <span class="font-semibold text-sm tracking-wide">Entrada / Saída</span>
+      </a>
+
+      <a routerLink="/spots" routerLinkActive="bg-blue-600/10 text-blue-400"
+        class="flex items-center px-4 py-3.5 rounded-xl text-slate-400 hover:bg-white/5 hover:text-slate-100 transition-all group">
+        <div
+          class="i-mdi-parking text-2xl mr-3 group-hover:scale-110 transition-transform text-slate-500 group-hover:text-blue-400">
+        </div>
+        <span class="font-semibold text-sm tracking-wide">Vagas do Pátio</span>
+      </a>
+
+      <a routerLink="/customers" routerLinkActive="bg-blue-600/10 text-blue-400"
+        class="flex items-center px-4 py-3.5 rounded-xl text-slate-400 hover:bg-white/5 hover:text-slate-100 transition-all group">
+        <div
+          class="i-mdi-account-multiple text-2xl mr-3 group-hover:scale-110 transition-transform text-slate-500 group-hover:text-blue-400">
+        </div>
+        <span class="font-semibold text-sm tracking-wide">Clientes e Veículos</span>
+      </a>
+
+      <a routerLink="/subscriptions" routerLinkActive="bg-blue-600/10 text-blue-400"
+        class="flex items-center px-4 py-3.5 rounded-xl text-slate-400 hover:bg-white/5 hover:text-slate-100 transition-all group">
+        <div
+          class="i-mdi-calendar-check text-2xl mr-3 group-hover:scale-110 transition-transform text-slate-500 group-hover:text-blue-400">
+        </div>
+        <span class="font-semibold text-sm tracking-wide">Mensalidades</span>
+      </a>
+
+      @if (user()?.role === 'Admin') {
+      <p class="px-4 text-xs font-bold text-slate-500 uppercase tracking-widest mb-4 mt-6">Administração</p>
+
+      <a routerLink="/prices" routerLinkActive="bg-blue-600/10 text-blue-400"
+        class="flex items-center px-4 py-3.5 rounded-xl text-slate-400 hover:bg-white/5 hover:text-slate-100 transition-all group animate-fade-in">
+        <div
+          class="i-mdi-cash-multiple text-2xl mr-3 group-hover:scale-110 transition-transform text-slate-500 group-hover:text-blue-400">
+        </div>
+        <span class="font-semibold text-sm tracking-wide">Tabela de Preços</span>
+      </a>
+
+      <a routerLink="/reports" routerLinkActive="bg-blue-600/10 text-blue-400"
+        class="flex items-center px-4 py-3.5 rounded-xl text-slate-400 hover:bg-white/5 hover:text-slate-100 transition-all group animate-fade-in">
+        <div
+          class="i-mdi-chart-bar text-2xl mr-3 group-hover:scale-110 transition-transform text-slate-500 group-hover:text-blue-400">
+        </div>
+        <span class="font-semibold text-sm tracking-wide">Relatórios</span>
+      </a>
+
+      <a routerLink="/users" routerLinkActive="bg-blue-600/10 text-blue-400"
+        class="flex items-center px-4 py-3.5 rounded-xl text-slate-400 hover:bg-white/5 hover:text-slate-100 transition-all group animate-fade-in">
+        <div
+          class="i-mdi-account-group text-2xl mr-3 group-hover:scale-110 transition-transform text-slate-500 group-hover:text-blue-400">
+        </div>
+        <span class="font-semibold text-sm tracking-wide">Usuários</span>
+      </a>
+      }
+    </nav>
+
+    <div class="p-5 z-10">
+      <div class="bg-white/5 border border-white/10 rounded-2xl p-4 flex items-center justify-between backdrop-blur-md">
+        <div class="flex items-center gap-3">
+          <div
+            class="w-10 h-10 rounded-full bg-gradient-to-tr from-blue-600 to-cyan-400 flex items-center justify-center text-white font-bold shadow-lg text-sm uppercase">
+            {{ user()?.fullName?.substring(0, 2) || 'OP' }}
+          </div>
+          <div class="overflow-hidden">
+            <p class="text-sm font-bold text-white leading-none mb-1 truncate max-w-[100px]">{{ user()?.fullName ||
+              'Operador' }}</p>
+            <p class="text-xs font-semibold text-slate-400 tracking-wide uppercase">{{ user()?.role || 'Staff' }}</p>
+          </div>
+        </div>
+        <button (click)="logout()"
+          class="w-8 h-8 rounded-full hover:bg-white/10 flex items-center justify-center text-slate-400 hover:text-rose-400 transition-colors">
+          <div class="i-mdi-logout text-xl"></div>
+        </button>
+      </div>
+    </div>
+  </aside>
+
+  <main class="flex-1 flex flex-col min-w-0 overflow-hidden relative z-10">
+    <header
+      class="h-20 bg-white/80 backdrop-blur-xl border-b border-slate-200 flex items-center justify-between px-10 sticky top-0 z-30">
+      <div class="flex items-center gap-4">
+        <h2 class="text-2xl font-black text-slate-800 tracking-tight">Painel de Controle <span
+            class="text-slate-400 font-medium ml-2 text-xl">| Gestão Operacional</span></h2>
+      </div>
+    </header>
+
+    <div class="flex-1 p-10 overflow-auto">
+      <router-outlet></router-outlet>
+    </div>
+  </main>
+</div>

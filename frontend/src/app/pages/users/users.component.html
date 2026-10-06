@@ -1,0 +1,83 @@
+<div class="space-y-6 animate-fade-in-up">
+  <div class="bg-white rounded-2xl shadow-sm border border-slate-100 p-6">
+    <h3 class="text-xl font-black text-slate-800 tracking-tight mb-6">Cadastrar Novo Operador</h3>
+    <form [formGroup]="userForm" (ngSubmit)="onSubmit()" class="grid grid-cols-1 md:grid-cols-5 gap-4 items-end">
+      <div>
+        <label class="block text-sm font-bold text-slate-700 mb-1.5">Nome Completo</label>
+        <input type="text" formControlName="fullName"
+          class="w-full px-4 py-3 bg-slate-50 border border-slate-200 rounded-xl text-slate-900 focus:ring-2 focus:ring-blue-600/50 focus:border-blue-600 transition-all font-medium">
+      </div>
+      <div>
+        <label class="block text-sm font-bold text-slate-700 mb-1.5">CPF</label>
+        <input type="text" formControlName="cpf"
+          class="w-full px-4 py-3 bg-slate-50 border border-slate-200 rounded-xl text-slate-900 focus:ring-2 focus:ring-blue-600/50 focus:border-blue-600 transition-all font-medium">
+      </div>
+      <div>
+        <label class="block text-sm font-bold text-slate-700 mb-1.5">E-mail Corporativo</label>
+        <input type="email" formControlName="email"
+          class="w-full px-4 py-3 bg-slate-50 border border-slate-200 rounded-xl text-slate-900 focus:ring-2 focus:ring-blue-600/50 focus:border-blue-600 transition-all font-medium">
+      </div>
+      <div>
+        <label class="block text-sm font-bold text-slate-700 mb-1.5">Senha Provisória</label>
+        <input type="password" formControlName="password"
+          class="w-full px-4 py-3 bg-slate-50 border border-slate-200 rounded-xl text-slate-900 focus:ring-2 focus:ring-blue-600/50 focus:border-blue-600 transition-all font-medium">
+      </div>
+      <button type="submit" [disabled]="userForm.invalid || isSubmitting()"
+        class="w-full py-3 bg-slate-900 hover:bg-slate-800 text-white font-bold rounded-xl shadow-lg shadow-slate-900/20 transition-all disabled:opacity-50 h-[50px] flex items-center justify-center gap-2">
+        <div class="i-mdi-content-save text-xl"></div>
+        Salvar
+      </button>
+    </form>
+  </div>
+
+  <div class="bg-white rounded-2xl shadow-sm border border-slate-100 overflow-hidden">
+    <div class="px-6 py-5 border-b border-slate-100">
+      <h3 class="text-lg font-bold text-slate-800">Usuários Registrados</h3>
+    </div>
+    <div class="overflow-x-auto">
+      <table class="w-full text-left border-collapse">
+        <thead>
+          <tr class="bg-slate-50 text-slate-500 text-sm uppercase tracking-wider">
+            <th class="px-6 py-4 font-bold border-b border-slate-100">Nome</th>
+            <th class="px-6 py-4 font-bold border-b border-slate-100">CPF</th>
+            <th class="px-6 py-4 font-bold border-b border-slate-100">E-mail</th>
+            <th class="px-6 py-4 font-bold border-b border-slate-100">Perfil</th>
+            <th class="px-6 py-4 font-bold border-b border-slate-100">Status</th>
+            <th class="px-6 py-4 font-bold border-b border-slate-100 text-right">Ação</th>
+          </tr>
+        </thead>
+        <tbody class="divide-y divide-slate-100">
+          @for (user of users(); track user.id) {
+          <tr class="hover:bg-slate-50/50 transition-colors">
+            <td class="px-6 py-4 font-semibold text-slate-800">{{ user.fullName }}</td>
+            <td class="px-6 py-4 text-slate-600">{{ user.cpf }}</td>
+            <td class="px-6 py-4 text-slate-600 font-medium">{{ user.email }}</td>
+            <td class="px-6 py-4 text-slate-600">{{ user.role }}</td>
+            <td class="px-6 py-4">
+              @if (user.isActive) {
+              <span
+                class="px-3 py-1.5 rounded-lg bg-emerald-100 text-emerald-700 text-xs font-black uppercase tracking-wide border border-emerald-200">Ativo</span>
+              } @else {
+              <span
+                class="px-3 py-1.5 rounded-lg bg-rose-100 text-rose-700 text-xs font-black uppercase tracking-wide border border-rose-200">Inativo</span>
+              }
+            </td>
+            <td class="px-6 py-4 text-right">
+              <button (click)="deactivate(user.id)" [disabled]="!user.isActive"
+                class="p-2.5 text-rose-500 hover:bg-rose-50 rounded-xl transition-colors disabled:opacity-30 border border-transparent hover:border-rose-100">
+                <div class="i-mdi-delete-outline text-xl"></div>
+              </button>
+            </td>
+          </tr>
+          } @empty {
+          <tr>
+            <td colspan="6" class="px-6 py-12 text-center text-slate-400 font-medium">
+              Nenhum usuário foi encontrado no banco de dados.
+            </td>
+          </tr>
+          }
+        </tbody>
+      </table>
+    </div>
+  </div>
+</div>

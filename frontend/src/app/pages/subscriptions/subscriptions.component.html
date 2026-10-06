@@ -1,0 +1,137 @@
+<div class="space-y-6 animate-fade-in-up">
+  <div class="bg-white rounded-2xl shadow-sm border border-slate-100 p-6">
+    <div class="flex items-center gap-3 mb-6">
+      <div class="w-12 h-12 rounded-xl bg-blue-50 flex items-center justify-center">
+        <div class="i-mdi-calendar-check text-2xl text-blue-600"></div>
+      </div>
+      <div>
+        <h3 class="text-xl font-black text-slate-800 tracking-tight">Gestão de Mensalidades</h3>
+        <p class="text-sm font-medium text-slate-500">Controle de pagamentos de clientes mensalistas</p>
+      </div>
+    </div>
+
+    <form [formGroup]="filterForm" (ngSubmit)="loadStatus()"
+      class="grid grid-cols-1 md:grid-cols-3 gap-4 items-end pt-4 border-t border-slate-100">
+      <div>
+        <label class="block text-sm font-bold text-slate-700 mb-1.5">Mês de Referência</label>
+        <select formControlName="month"
+          class="w-full px-4 py-3 bg-slate-50 border border-slate-200 rounded-xl text-slate-900 focus:ring-2 focus:ring-blue-600/50 outline-none cursor-pointer">
+          <option [value]="1">Janeiro</option>
+          <option [value]="2">Fevereiro</option>
+          <option [value]="3">Março</option>
+          <option [value]="4">Abril</option>
+          <option [value]="5">Maio</option>
+          <option [value]="6">Junho</option>
+          <option [value]="7">Julho</option>
+          <option [value]="8">Agosto</option>
+          <option [value]="9">Setembro</option>
+          <option [value]="10">Outubro</option>
+          <option [value]="11">Novembro</option>
+          <option [value]="12">Dezembro</option>
+        </select>
+      </div>
+      <div>
+        <label class="block text-sm font-bold text-slate-700 mb-1.5">Ano</label>
+        <input type="number" formControlName="year"
+          class="w-full px-4 py-3 bg-slate-50 border border-slate-200 rounded-xl text-slate-900 focus:ring-2 focus:ring-blue-600/50 outline-none">
+      </div>
+      <button type="submit"
+        class="w-full py-3 bg-slate-900 hover:bg-slate-800 text-white font-bold rounded-xl shadow-lg transition-all h-[50px] flex items-center justify-center gap-2">
+        <div class="i-mdi-magnify text-xl"></div>
+        Buscar
+      </button>
+    </form>
+  </div>
+
+  <div class="bg-white rounded-2xl shadow-sm border border-slate-100 overflow-hidden">
+    <div class="px-6 py-5 border-b border-slate-100">
+      <h3 class="text-lg font-bold text-slate-800">Status dos Clientes</h3>
+    </div>
+    <div class="overflow-x-auto">
+      <table class="w-full text-left border-collapse">
+        <thead>
+          <tr class="bg-slate-50 text-slate-500 text-sm uppercase tracking-wider">
+            <th class="px-6 py-4 font-bold border-b border-slate-100">Cliente</th>
+            <th class="px-6 py-4 font-bold border-b border-slate-100">Vencimento</th>
+            <th class="px-6 py-4 font-bold border-b border-slate-100">Status</th>
+            <th class="px-6 py-4 font-bold border-b border-slate-100">Pagamento</th>
+            <th class="px-6 py-4 font-bold border-b border-slate-100 text-right">Ação</th>
+          </tr>
+        </thead>
+        <tbody class="divide-y divide-slate-100">
+          @for (sub of subscriptions(); track sub.userId) {
+          <tr class="hover:bg-slate-50/50 transition-colors">
+            <td class="px-6 py-4">
+              <p class="font-bold text-slate-800">{{ sub.customerName }}</p>
+              <p class="text-xs text-slate-500 font-mono mt-0.5">{{ sub.cpf }}</p>
+            </td>
+            <td class="px-6 py-4 font-medium text-slate-600">Dia {{ sub.paymentDay | number:'2.0-0' }}</td>
+            <td class="px-6 py-4">
+              <span class="px-3 py-1 rounded-lg text-xs font-black uppercase tracking-wide border"
+                [class.bg-emerald-100]="sub.status === 'Pago'" [class.text-emerald-700]="sub.status === 'Pago'"
+                [class.border-emerald-200]="sub.status === 'Pago'" [class.bg-amber-100]="sub.status === 'Pendente'"
+                [class.text-amber-700]="sub.status === 'Pendente'" [class.border-amber-200]="sub.status === 'Pendente'"
+                [class.bg-rose-100]="sub.status === 'Atrasado'" [class.text-rose-700]="sub.status === 'Atrasado'"
+                [class.border-rose-200]="sub.status === 'Atrasado'">
+                {{ sub.status }}
+              </span>
+            </td>
+            <td class="px-6 py-4">
+              @if (sub.status === 'Pago') {
+              <p class="font-bold text-emerald-600">{{ sub.amountPaid | currency:'BRL' }}</p>
+              <p class="text-xs text-slate-400">{{ sub.paymentDate | date:'dd/MM/yy HH:mm' }}</p>
+              } @else {
+              <span class="text-slate-400 italic text-sm">-</span>
+              }
+            </td>
+            <td class="px-6 py-4 text-right">
+              @if (sub.status !== 'Pago') {
+              <button (click)="openPaymentModal(sub)"
+                class="px-4 py-2 bg-emerald-50 text-emerald-600 hover:bg-emerald-100 border border-emerald-100 font-bold rounded-lg transition-colors inline-flex items-center gap-1">
+                <div class="i-mdi-cash-check"></div>
+                Receber
+              </button>
+              }
+            </td>
+          </tr>
+          } @empty {
+          <tr>
+            <td colspan="5" class="px-6 py-12 text-center text-slate-400 font-medium">Nenhum mensalista cadastrado.</td>
+          </tr>
+          }
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+  @if (showPaymentModal() && selectedSubscription()) {
+  <div class="fixed inset-0 z-[100] flex items-center justify-center bg-slate-900/60 backdrop-blur-sm animate-fade-in">
+    <div class="bg-white rounded-3xl shadow-2xl w-full max-w-sm overflow-hidden m-4 border border-slate-100">
+      <div class="p-6 border-b border-slate-100 bg-slate-50/50">
+        <h3 class="text-xl font-black text-slate-800">Registrar Pagamento</h3>
+      </div>
+      <div class="p-6">
+        <div class="mb-5 p-4 bg-slate-50 rounded-xl border border-slate-200">
+          <p class="text-sm font-bold text-slate-500">Cliente</p>
+          <p class="font-bold text-slate-800 text-lg">{{ selectedSubscription()?.customerName }}</p>
+        </div>
+        <form [formGroup]="paymentForm" (ngSubmit)="confirmPayment()">
+          <div class="mb-6">
+            <label class="block text-sm font-bold text-slate-700 mb-1.5">Valor Recebido (R$)</label>
+            <input type="number" step="0.01" formControlName="amount"
+              class="w-full px-4 py-3 bg-white border border-slate-200 rounded-xl text-slate-900 focus:ring-2 focus:ring-blue-600/50 outline-none font-bold text-lg">
+          </div>
+          <div class="flex justify-end gap-3">
+            <button type="button" (click)="closePaymentModal()"
+              class="px-5 py-2.5 rounded-xl font-bold text-slate-600 bg-slate-100 hover:bg-slate-200">Cancelar</button>
+            <button type="submit" [disabled]="paymentForm.invalid || isSubmitting()"
+              class="px-5 py-2.5 rounded-xl font-bold text-white bg-emerald-600 hover:bg-emerald-700 shadow-lg shadow-emerald-600/30 flex items-center gap-2 disabled:opacity-50">
+              Confirmar
+            </button>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+  }
+</div>

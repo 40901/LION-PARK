@@ -1,0 +1,212 @@
+<div class="space-y-6 animate-fade-in-up">
+  <div class="bg-white rounded-2xl shadow-sm border border-slate-100 p-6 transition-all"
+    [class.border-amber-400]="isEditMode()" [class.bg-amber-50]="isEditMode()">
+    <div class="flex items-center justify-between mb-6">
+      <div class="flex items-center gap-3">
+        <div class="w-12 h-12 rounded-xl flex items-center justify-center transition-colors"
+          [class.bg-blue-50]="!isEditMode()" [class.text-blue-600]="!isEditMode()" [class.bg-amber-100]="isEditMode()"
+          [class.text-amber-600]="isEditMode()">
+          <div [class]="isEditMode() ? 'i-mdi-account-edit text-2xl' : 'i-mdi-account-plus text-2xl'"></div>
+        </div>
+        <div>
+          <h3 class="text-xl font-black text-slate-800 tracking-tight">{{ isEditMode() ? 'Editando Cliente' : 'Cadastrar
+            Novo Cliente' }}</h3>
+          <p class="text-sm font-medium text-slate-500">{{ isEditMode() ? 'Atualize as informações e o plano do cliente'
+            : 'Registre os proprietários dos veículos' }}</p>
+        </div>
+      </div>
+      @if (isEditMode()) {
+      <button (click)="cancelEdit()"
+        class="px-4 py-2 text-sm font-bold text-slate-600 bg-white border border-slate-200 rounded-lg hover:bg-slate-50 transition-colors">
+        Cancelar Edição
+      </button>
+      }
+    </div>
+
+    <form [formGroup]="customerForm" (ngSubmit)="onSubmitCustomer()"
+      class="grid grid-cols-1 md:grid-cols-6 gap-4 items-end">
+      <div class="md:col-span-2">
+        <label class="block text-sm font-bold text-slate-700 mb-1.5">Nome Completo</label>
+        <input type="text" formControlName="fullName"
+          class="w-full px-4 py-3 bg-slate-50 border border-slate-200 rounded-xl text-slate-900 focus:ring-2 focus:ring-blue-600/50 focus:border-blue-600 transition-all font-medium"
+          placeholder="Ex: João da Silva">
+      </div>
+      <div>
+        <label class="block text-sm font-bold text-slate-700 mb-1.5">CPF</label>
+        <input type="text" formControlName="cpf"
+          class="w-full px-4 py-3 bg-slate-50 border border-slate-200 rounded-xl text-slate-900 focus:ring-2 focus:ring-blue-600/50 focus:border-blue-600 transition-all font-medium"
+          placeholder="000.000.000-00">
+      </div>
+      <div>
+        <label class="block text-sm font-bold text-slate-700 mb-1.5">E-mail (Opcional)</label>
+        <input type="email" formControlName="email"
+          class="w-full px-4 py-3 bg-slate-50 border border-slate-200 rounded-xl text-slate-900 focus:ring-2 focus:ring-blue-600/50 focus:border-blue-600 transition-all font-medium"
+          placeholder="joao@email.com">
+      </div>
+      <div>
+        <label class="block text-sm font-bold text-slate-700 mb-1.5">Plano</label>
+        <select formControlName="planType"
+          class="w-full px-4 py-3 bg-slate-50 border border-slate-200 rounded-xl text-slate-900 focus:ring-2 focus:ring-blue-600/50 focus:border-blue-600 transition-all font-bold shadow-sm appearance-none outline-none cursor-pointer">
+          <option value="Padrão">Padrão</option>
+          <option value="Mensalista">Mensalista</option>
+        </select>
+      </div>
+
+      @if (customerForm.get('planType')?.value === 'Mensalista') {
+      <div class="animate-fade-in">
+        <label class="block text-sm font-bold text-emerald-700 mb-1.5">Vencimento</label>
+        <select formControlName="paymentDay"
+          class="w-full px-4 py-3 bg-emerald-50 border border-emerald-200 rounded-xl text-emerald-900 focus:ring-2 focus:ring-emerald-600/50 focus:border-emerald-600 transition-all font-bold shadow-sm appearance-none outline-none cursor-pointer">
+          <option [value]="5">Dia 05</option>
+          <option [value]="8">Dia 08</option>
+          <option [value]="10">Dia 10</option>
+          <option [value]="20">Dia 20</option>
+        </select>
+      </div>
+      }
+
+      <button type="submit" [disabled]="customerForm.invalid || isSubmittingCustomer()"
+        class="w-full py-3 bg-slate-900 hover:bg-slate-800 text-white font-bold rounded-xl shadow-lg shadow-slate-900/20 transition-all disabled:opacity-50 h-[50px] flex items-center justify-center gap-2"
+        [class.md:col-span-6]="customerForm.get('planType')?.value !== 'Mensalista'"
+        [class.md:col-span-1]="customerForm.get('planType')?.value === 'Mensalista'">
+        <div [class]="isEditMode() ? 'i-mdi-check text-xl' : 'i-mdi-content-save text-xl'"></div>
+        {{ isEditMode() ? 'Atualizar' : 'Salvar' }}
+      </button>
+    </form>
+  </div>
+
+  <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+    <div class="bg-white rounded-2xl shadow-sm border border-slate-100 overflow-hidden flex flex-col h-[500px]">
+      <div class="px-6 py-5 border-b border-slate-100">
+        <h3 class="text-lg font-bold text-slate-800">Clientes Cadastrados</h3>
+      </div>
+      <div class="flex-1 overflow-y-auto p-4 space-y-3">
+        @for (customer of customers(); track customer.id) {
+        <div (click)="selectCustomer(customer)"
+          class="p-4 rounded-xl border-2 cursor-pointer transition-all hover:border-blue-300 relative group"
+          [class.border-blue-500]="selectedCustomer()?.id === customer.id"
+          [class.bg-blue-50]="selectedCustomer()?.id === customer.id"
+          [class.border-slate-100]="selectedCustomer()?.id !== customer.id">
+
+          <button (click)="editCustomer(customer, $event)"
+            class="absolute top-4 right-14 w-8 h-8 rounded-lg bg-amber-100 text-amber-600 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity hover:bg-amber-200">
+            <div class="i-mdi-pencil text-lg"></div>
+          </button>
+
+          <div class="flex items-center justify-between">
+            <div>
+              <div class="flex items-center gap-2 mb-1">
+                <p class="font-bold text-slate-800">{{ customer.fullName }}</p>
+                <span class="px-2 py-0.5 rounded text-[10px] font-black uppercase tracking-wider border"
+                  [class.bg-emerald-100]="customer.planType === 'Mensalista'"
+                  [class.text-emerald-700]="customer.planType === 'Mensalista'"
+                  [class.border-emerald-200]="customer.planType === 'Mensalista'"
+                  [class.bg-slate-100]="customer.planType === 'Padrão'"
+                  [class.text-slate-600]="customer.planType === 'Padrão'"
+                  [class.border-slate-200]="customer.planType === 'Padrão'">
+                  {{ customer.planType }}
+                </span>
+                @if (customer.planType === 'Mensalista') {
+                <span class="text-[10px] font-bold text-slate-400">Venc: Dia {{ customer.paymentDay | number:'2.0-0'
+                  }}</span>
+                }
+              </div>
+              <p class="text-sm text-slate-500">{{ customer.cpf }}</p>
+            </div>
+            <div class="w-10 h-10 rounded-full flex items-center justify-center transition-colors"
+              [class.bg-blue-600]="selectedCustomer()?.id === customer.id"
+              [class.text-white]="selectedCustomer()?.id === customer.id"
+              [class.bg-slate-100]="selectedCustomer()?.id !== customer.id"
+              [class.text-slate-400]="selectedCustomer()?.id !== customer.id">
+              <div class="i-mdi-chevron-right text-2xl"></div>
+            </div>
+          </div>
+        </div>
+        } @empty {
+        <div class="py-12 text-center text-slate-400 font-medium">Nenhum cliente cadastrado no sistema.</div>
+        }
+      </div>
+    </div>
+
+    @if (selectedCustomer()) {
+    <div class="bg-white rounded-2xl shadow-sm border border-slate-100 flex flex-col h-[500px] animate-fade-in">
+      <div class="px-6 py-5 border-b border-slate-100 flex items-center justify-between bg-blue-50/50">
+        <div>
+          <h3 class="text-lg font-bold text-slate-800">Frota do Cliente</h3>
+          <p class="text-sm text-slate-500">Proprietário: <span class="font-bold text-slate-700">{{
+              selectedCustomer()?.fullName }}</span></p>
+        </div>
+        <div class="w-10 h-10 rounded-xl bg-blue-100 flex items-center justify-center">
+          <div class="i-mdi-car-multiple text-xl text-blue-600"></div>
+        </div>
+      </div>
+
+      <div class="p-6 border-b border-slate-100 bg-slate-50/50">
+        <form [formGroup]="vehicleForm" (ngSubmit)="onSubmitVehicle()" class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+          <div>
+            <input type="text" formControlName="licensePlate"
+              class="w-full px-3 py-2 bg-white border border-slate-200 rounded-lg text-slate-900 focus:ring-2 focus:ring-blue-600/50 outline-none font-mono uppercase text-sm"
+              placeholder="Placa (ABC-1234)">
+          </div>
+          <div>
+            <select formControlName="category"
+              class="w-full px-3 py-2 bg-white border border-slate-200 rounded-lg text-slate-900 focus:ring-2 focus:ring-blue-600/50 outline-none text-sm">
+              <option value="Carro">Carro</option>
+              <option value="Moto">Moto</option>
+              <option value="PCD">PCD</option>
+              <option value="Van">Van / Utilitário</option>
+            </select>
+          </div>
+          <div>
+            <input type="text" formControlName="model"
+              class="w-full px-3 py-2 bg-white border border-slate-200 rounded-lg text-slate-900 focus:ring-2 focus:ring-blue-600/50 outline-none text-sm"
+              placeholder="Modelo">
+          </div>
+          <div class="flex gap-2">
+            <input type="text" formControlName="color"
+              class="w-full px-3 py-2 bg-white border border-slate-200 rounded-lg text-slate-900 focus:ring-2 focus:ring-blue-600/50 outline-none text-sm"
+              placeholder="Cor">
+            <button type="submit" [disabled]="vehicleForm.invalid || isSubmittingVehicle()"
+              class="px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white font-bold rounded-lg transition-all disabled:opacity-50 flex items-center justify-center">
+              <div class="i-mdi-plus"></div>
+            </button>
+          </div>
+        </form>
+      </div>
+
+      <div class="flex-1 overflow-y-auto p-4">
+        <div class="space-y-2">
+          @for (vehicle of vehicles(); track vehicle.id) {
+          <div
+            class="flex items-center justify-between p-3 rounded-lg border border-slate-100 hover:bg-slate-50 transition-colors">
+            <div>
+              <div class="flex items-center gap-2 mb-0.5">
+                <span class="font-mono font-bold text-slate-800 bg-slate-100 px-2 py-0.5 rounded text-xs">{{
+                  vehicle.licensePlate }}</span>
+                <span class="text-[10px] font-bold text-blue-600 uppercase tracking-wider">{{ vehicle.category }}</span>
+              </div>
+              <p class="text-sm font-medium text-slate-600">{{ vehicle.model }} • {{ vehicle.color }}</p>
+            </div>
+            <button (click)="removeVehicle(vehicle.id)"
+              class="p-2 text-rose-500 hover:bg-rose-50 rounded-lg transition-colors">
+              <div class="i-mdi-delete-outline text-lg"></div>
+            </button>
+          </div>
+          } @empty {
+          <div class="py-8 text-center text-slate-400 text-sm font-medium">Nenhum veículo registrado para este cliente.
+          </div>
+          }
+        </div>
+      </div>
+    </div>
+    } @else {
+    <div
+      class="bg-slate-50 rounded-2xl border border-slate-100 border-dashed flex flex-col items-center justify-center h-[500px] text-slate-400 p-6 text-center">
+      <div class="i-mdi-cursor-default-click text-5xl mb-4 opacity-50"></div>
+      <p class="font-bold text-lg text-slate-600">Selecione um cliente</p>
+      <p class="text-sm mt-1">Clique em um cliente na lista ao lado para visualizar e gerenciar sua frota de veículos.
+      </p>
+    </div>
+    }
+  </div>
+</div>

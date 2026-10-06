@@ -1,0 +1,80 @@
+<div class="space-y-6 animate-fade-in-up">
+  <div class="bg-white rounded-2xl shadow-sm border border-slate-100 p-6">
+    <div class="flex items-center gap-3 mb-6">
+      <div class="w-12 h-12 rounded-xl bg-blue-50 flex items-center justify-center">
+        <div class="i-mdi-chart-line text-2xl text-blue-600"></div>
+      </div>
+      <div>
+        <h3 class="text-xl font-black text-slate-800 tracking-tight">Relatório Financeiro</h3>
+        <p class="text-sm font-medium text-slate-500">Gere extratos por período de competência</p>
+      </div>
+    </div>
+
+    <form [formGroup]="reportForm" (ngSubmit)="generateReport()"
+      class="grid grid-cols-1 md:grid-cols-3 gap-4 items-end">
+      <div>
+        <label class="block text-sm font-bold text-slate-700 mb-1.5">Data Inicial</label>
+        <input type="date" formControlName="startDate"
+          class="w-full px-4 py-3 bg-slate-50 border border-slate-200 rounded-xl text-slate-900 focus:ring-2 focus:ring-blue-600/50 focus:border-blue-600 transition-all font-medium">
+      </div>
+      <div>
+        <label class="block text-sm font-bold text-slate-700 mb-1.5">Data Final</label>
+        <input type="date" formControlName="endDate"
+          class="w-full px-4 py-3 bg-slate-50 border border-slate-200 rounded-xl text-slate-900 focus:ring-2 focus:ring-blue-600/50 focus:border-blue-600 transition-all font-medium">
+      </div>
+      <button type="submit" [disabled]="reportForm.invalid || isSubmitting()"
+        class="w-full py-3 bg-blue-600 hover:bg-blue-700 text-white font-bold rounded-xl shadow-lg shadow-blue-600/20 transition-all disabled:opacity-50 h-[50px] flex items-center justify-center gap-2">
+        <div class="i-mdi-magnify text-xl"></div>
+        Gerar Relatório
+      </button>
+    </form>
+  </div>
+
+  @if (records().length > 0) {
+  <div class="grid grid-cols-1 md:grid-cols-3 gap-6 animate-fade-in">
+    <div class="bg-emerald-600 p-6 rounded-2xl shadow-lg shadow-emerald-600/20 text-white flex items-center gap-5">
+      <div class="w-14 h-14 rounded-full bg-white/20 flex items-center justify-center">
+        <div class="i-mdi-currency-usd text-3xl"></div>
+      </div>
+      <div>
+        <p class="text-sm font-bold text-emerald-100 uppercase tracking-wide">Faturamento Total</p>
+        <p class="text-3xl font-black">{{ totalAmount() | currency:'BRL' }}</p>
+      </div>
+    </div>
+  </div>
+
+  <div class="bg-white rounded-2xl shadow-sm border border-slate-100 overflow-hidden animate-fade-in-up">
+    <div class="px-6 py-5 border-b border-slate-100">
+      <h3 class="text-lg font-bold text-slate-800">Registros Finalizados</h3>
+    </div>
+    <div class="overflow-x-auto">
+      <table class="w-full text-left border-collapse">
+        <thead>
+          <tr class="bg-slate-50 text-slate-500 text-sm uppercase tracking-wider">
+            <th class="px-6 py-4 font-bold border-b border-slate-100">Placa</th>
+            <th class="px-6 py-4 font-bold border-b border-slate-100">Vaga</th>
+            <th class="px-6 py-4 font-bold border-b border-slate-100">Entrada</th>
+            <th class="px-6 py-4 font-bold border-b border-slate-100">Saída</th>
+            <th class="px-6 py-4 font-bold border-b border-slate-100 text-right">Valor</th>
+          </tr>
+        </thead>
+        <tbody class="divide-y divide-slate-100">
+          @for (record of records(); track record.id) {
+          <tr class="hover:bg-slate-50/50 transition-colors">
+            <td class="px-6 py-4">
+              <span
+                class="px-2 py-1 bg-slate-100 text-slate-800 border border-slate-200 rounded font-mono font-bold text-xs">{{
+                record.vehiclePlate }}</span>
+            </td>
+            <td class="px-6 py-4 font-mono text-sm font-bold text-slate-600">{{ record.spotIdentification }}</td>
+            <td class="px-6 py-4 font-medium text-slate-700">{{ record.entryTime | date:'dd/MM/yyyy HH:mm' }}</td>
+            <td class="px-6 py-4 font-medium text-slate-700">{{ record.exitTime | date:'dd/MM/yyyy HH:mm' }}</td>
+            <td class="px-6 py-4 font-bold text-emerald-600 text-right">{{ record.totalAmount | currency:'BRL' }}</td>
+          </tr>
+          }
+        </tbody>
+      </table>
+    </div>
+  </div>
+  }
+</div>
