@@ -199,7 +199,7 @@ LionPark/
 
 > O primeiro usuário cadastrado no sistema é promovido automaticamente a **Admin**.
 
-##status
+## status
 
 Em desenvolvimento.
 
