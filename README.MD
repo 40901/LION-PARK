@@ -207,6 +207,7 @@ Em desenvolvimento.
 | `entrega1409` | versão submetida à avaliação de 14/09/2026 |
 | `entrega2809` | versão submetida à avaliação de 28/09/2026 |
 | `entrega0911` | versão submetida à avaliação de 09/11/2026 |
+| `entregafinal` | versão submetida à avaliação de 16/11/2026 |
 ---
 
 © 2026 Lion Park Technologies. Todos os direitos reservados.
